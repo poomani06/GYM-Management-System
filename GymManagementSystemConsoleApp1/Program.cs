@@ -1,14 +1,30 @@
-﻿using memberdem;
+﻿
+using memberdem;
 using memberserv;
+using memshpserc;
+using planservic;
+using reportserv;
+
+
+using System;
 
 Console.WriteLine("Hello, World!");
-Console.WriteLine("Enter a MemberId");
-int id = Convert.ToInt32(Console.ReadLine());
-Console.WriteLine("Enter a FullName");
-string? name = Console.ReadLine();
-Console.WriteLine("Enter a Age");
-int age = Convert.ToInt32(Console.ReadLine());
-Console.WriteLine("Enter a PhoneNumber");
-string? pnumber = Console.ReadLine();
-Console.WriteLine("Enter a JoinDate");
-int date = Convert.ToInt32(Console.ReadLine());
+
+// Create service objects
+MemberServices memberService = new MemberServices();
+PlanServices planService = new PlanServices();
+MemberShipService membershipService = new MemberShipService();
+ReportServices report = new ReportServices();
+
+// Manage plans
+planService.AddPlan();
+planService.DisplayPlans();
+planService.GetPlanById();
+planService.SearchPlan();
+planService.UpdatePlan();
+
+// Display active membership count per plan
+report.ActiveMembershipsPerPlan(
+    membershipService.GetAll(),
+    planService.GetAll());
+report.ExpiringMemberships(membershipService.GetAll());

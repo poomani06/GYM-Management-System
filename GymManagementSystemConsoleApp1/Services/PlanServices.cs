@@ -7,7 +7,7 @@ namespace planservic
 {
     public class PlanServices
     {
-        List<MembershipPlan> plans = new List<MembershipPlan>();
+        public List<MembershipPlan> plans = new List<MembershipPlan>();
 
         // Add plan
         public void AddPlan()
@@ -51,8 +51,7 @@ namespace planservic
                 return;
             }
 
-            MembershipPlan plan =
-                new MembershipPlan(id, name, duration, fee);
+            MembershipPlan plan = new MembershipPlan(id, name, duration, fee);
 
             plans.Add(plan);
 
@@ -93,9 +92,9 @@ namespace planservic
                 return;
             }
 
-            Console.WriteLine("Plan Name: " + plan.PlanName);
-            Console.WriteLine("Duration: " + plan.DurationInDays);
-            Console.WriteLine("Fee: " + plan.Fee);
+            Console.WriteLine($"Plan Name:  { plan.PlanName}");
+            Console.WriteLine($"Duration: { plan.DurationInDays}");
+            Console.WriteLine($"Fee: { plan.Fee}");
         }
 
         // Search plan by name
@@ -177,10 +176,6 @@ namespace planservic
             Console.WriteLine("Plan updated successfully");
         }
 
-        // Return all plans
-        public List<MembershipPlan> GetAll()
-        {
-            return plans;
-        }
+        
     }
 }

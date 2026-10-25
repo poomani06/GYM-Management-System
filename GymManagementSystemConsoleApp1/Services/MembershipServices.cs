@@ -12,10 +12,12 @@ namespace memshpserc
 {
     public class MemberShipService
     {
-        List<MemberShip> memberships = new List<MemberShip>();
+        public MemberServices? memberService;
+        public PlanServices? planService;
+        public List<MemberShip> memberships = new List<MemberShip>();
 
         // Assign plan to member
-        public void AssignPlan(MemberShipService memberService, PlanServices planService)
+        public void AssignPlan()
         {
             Console.WriteLine("Enter Membership ID:");
             int membershipId = Convert.ToInt32(Console.ReadLine());
@@ -32,7 +34,7 @@ namespace memshpserc
             Console.WriteLine("Enter Member ID:");
             int memberId = Convert.ToInt32(Console.ReadLine());
 
-            if (memberService.GetAll().FirstOrDefault(m => m.MemberId == memberId) == null)
+            if (!memberService.mem.Any(m => m.MemberId == memberId))
             {
                 Console.WriteLine("Member not found");
                 return;
@@ -41,8 +43,16 @@ namespace memshpserc
             Console.WriteLine("Enter Plan ID:");
             int planId = Convert.ToInt32(Console.ReadLine());
 
-            MembershipPlan? plan = planService.GetAll()
-                .FirstOrDefault(p => p.PlanId == planId);
+            MembershipPlan? plan = null;
+
+            foreach (MembershipPlan p in planService.plans)
+            {
+                if (p.PlanId == planId)
+                {
+                    plan = p;
+                    break;
+                }
+            }
 
             if (plan == null)
             {
@@ -104,7 +114,7 @@ namespace memshpserc
             Console.WriteLine("Enter Membership ID:");
             int id = Convert.ToInt32(Console.ReadLine());
 
-            MemberShip? m = memberships.FirstOrDefault(x => x.MembershipId == id);
+            MemberShip m = memberships.FirstOrDefault(x => x.MembershipId == id);
 
             if (m == null)
             {
@@ -158,7 +168,7 @@ namespace memshpserc
         }
 
         // Renew membership by creating a new record
-        public void RenewMembership(MemberShipService memberService, PlanServices planService)
+        public void RenewMembership(MemberServices memberService, PlanServices planService)
         {
             Console.WriteLine("Enter old Membership ID:");
             int oldId = Convert.ToInt32(Console.ReadLine());
@@ -191,8 +201,16 @@ namespace memshpserc
                 }
             }
 
-            MembershipPlan? plan = planService.GetAll()
-                .FirstOrDefault(p => p.PlanId == old.PlanId);
+            MembershipPlan? plan = null;
+
+            foreach (MembershipPlan p in planService.plans)
+            {
+                if (p.PlanId == old.PlanId)
+                {
+                    plan = p;
+                    break;
+                }
+            }
 
             if (plan == null)
             {

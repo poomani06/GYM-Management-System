@@ -1,41 +1,63 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using memberdem;
+
 namespace memberserv
 {
     public class MemberServices
     {
-        List<Member> mem = new List<Member>();
-        public void Register(Member member)
-        {
+        public List<Member> mem = new List<Member>();
 
-            if (mem.Any(m => m.MemberId == member.MemberId))
+        // Register member
+        public void Register()
+        {
+            Console.WriteLine("Enter Member ID");
+            int id = Convert.ToInt32(Console.ReadLine());
+
+            if (mem.Any(m => m.MemberId == id))
             {
-                Console.WriteLine("Id already Exist");
+                Console.WriteLine("ID already exists");
                 return;
             }
-            if (mem.Any(m => m.Age < 16 || m.Age > 100))
+
+            Console.WriteLine("Enter Full Name");
+            string? name = Console.ReadLine();
+
+            if (String.IsNullOrWhiteSpace(name))
+            {
+                Console.WriteLine("Full Name is required");
+                return;
+            }
+
+            Console.WriteLine("Enter Age");
+            int age = Convert.ToInt32(Console.ReadLine());
+
+            if (age < 16 || age > 100)
             {
                 Console.WriteLine("Invalid age");
                 return;
             }
-            if (String.IsNullOrWhiteSpace(member.FullName))
-            {
-                Console.WriteLine("FullName is Required");
-                return;
 
-            }
-            if (member.PhoneNumber.Length != 10)
-            {
-                Console.WriteLine("10 digit number is required");
-                return;
+            Console.WriteLine("Enter Phone Number");
+            string? phone = Console.ReadLine();
 
+            if (String.IsNullOrWhiteSpace(phone) ||
+                phone.Length != 10)
+            {
+                Console.WriteLine("Enter a valid 10-digit phone number");
+                return;
             }
+
+            Member member = new Member(id, name, age, phone, DateTime.Today);
+
             mem.Add(member);
-            Console.WriteLine("member is register");
-            
+
+            Console.WriteLine("Member registered successfully");
         }
+
+        // Display all members
         public void Display()
         {
             if (mem.Count == 0)
@@ -54,11 +76,13 @@ namespace memberserv
             }
         }
 
-        
-        public void SearchById(int id)
+        // Search member by ID
+        public void SearchById()
         {
-            Member? member = mem.FirstOrDefault(
-                m => m.MemberId == id);
+            Console.WriteLine("Enter Member ID");
+            int id = Convert.ToInt32(Console.ReadLine());
+
+            Member? member = mem.FirstOrDefault(m => m.MemberId == id);
 
             if (member == null)
             {
@@ -73,34 +97,38 @@ namespace memberserv
                 $"Phone: {member.PhoneNumber}");
         }
 
-        
-        public void SearchByNameOrPhone(string keyword)
+        // Search by name or phone
+        public void SearchByNameOrPhone()
         {
-            var result = mem.Where(m =>
-                m.FullName.Contains(
-                    keyword, StringComparison.OrdinalIgnoreCase)
-                || m.PhoneNumber.Contains(keyword));
+            Console.WriteLine("Enter name or phone number");
+            string? keyword = Console.ReadLine();
 
-            if (!result.Any())
+            if (String.IsNullOrWhiteSpace(keyword))
             {
-                Console.WriteLine("Member not found");
+                Console.WriteLine("Enter a search value");
                 return;
             }
 
-            foreach (Member member in result)
+            foreach (Member member in mem)
             {
-                Console.WriteLine(
-                    $"ID: {member.MemberId}, " +
-                    $"Name: {member.FullName}, " +
-                    $"Phone: {member.PhoneNumber}");
+                if (member.FullName.ToLower().Contains(keyword.ToLower()) ||
+                    member.PhoneNumber.Contains(keyword))
+                {
+                    Console.WriteLine("ID: " + member.MemberId);
+                    Console.WriteLine("Name: " + member.FullName);
+                    Console.WriteLine("Phone: " + member.PhoneNumber);
+                }
             }
         }
-
         
-        public void UpdateContact(int id, string phone)
+
+        // Update phone number
+        public void UpdateContact()
         {
-            Member? member = mem.FirstOrDefault(
-                m => m.MemberId == id);
+            Console.WriteLine("Enter Member ID");
+            int id = Convert.ToInt32(Console.ReadLine());
+
+            Member? member = mem.FirstOrDefault(m => m.MemberId == id);
 
             if (member == null)
             {
@@ -108,46 +136,38 @@ namespace memberserv
                 return;
             }
 
-            if (String.IsNullOrWhiteSpace(phone) ||
-                phone.Length != 10 ||
-                !phone.All(char.IsDigit))
+            Console.WriteLine("Enter new phone number");
+            string? phone = Console.ReadLine();
+
+            if (String.IsNullOrWhiteSpace(phone) || phone.Length != 10)
             {
                 Console.WriteLine("Enter a valid 10-digit phone number");
                 return;
             }
 
             member.PhoneNumber = phone;
+
             Console.WriteLine("Phone number updated successfully");
         }
 
-        
-        public void DeleteMember(int id, bool hasMembershipHistory)
+        // Delete member
+
+        public void DeleteMember()
         {
-            Member? member = mem.FirstOrDefault(
-                m => m.MemberId == id);
+            Console.WriteLine("Enter Member ID");
+            int id = Convert.ToInt32(Console.ReadLine());
+
+            Member? member = mem.FirstOrDefault(m => m.MemberId == id);
 
             if (member == null)
             {
                 Console.WriteLine("Member not found");
-                return;
             }
-
-            if (hasMembershipHistory)
+            else
             {
-                Console.WriteLine(
-                    "Cannot delete: membership history exists");
-                return;
+                mem.Remove(member);
+                Console.WriteLine("Member deleted successfully");
             }
-
-            mem.Remove(member);
-            Console.WriteLine("Member deleted successfully");
-        }
-
-      
-        public List<Member> GetAllMembers()
-        {
-            return mem;
         }
     }
 }
-            
